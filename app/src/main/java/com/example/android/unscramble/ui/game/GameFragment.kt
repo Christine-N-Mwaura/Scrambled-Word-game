@@ -25,6 +25,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import com.example.android.unscramble.R
 import com.example.android.unscramble.databinding.GameFragmentBinding
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 
 /**
  * Fragment where the game is played, contains the game logic.
@@ -65,9 +66,29 @@ class GameFragment : Fragment() {
                 R.string.word_count, 0, MAX_NO_OF_WORDS)
     }
 
+
     override fun onDetach() {
         super.onDetach()
         Log.d("GameFragment","GameFragment Destroyed!")
+    }
+
+    //Creates and shows an AlertDialog with the final score
+    private fun showFinalScoreDialog(){
+        MaterialAlertDialogBuilder(requireContext())
+            //set title for the alert dialog
+            //set message to show final score
+            //make the alert dialog not cancelable when the back key is pressed
+            //Use setNegativeButton() and setPositiveButton() to add two text buttons
+            .setTitle(getString(R.string.congratulations))
+            .setMessage(getString(R.string.you_scored,viewModel.score))
+            .setCancelable(false)
+            .setPositiveButton(getString(R.string.exit)){_, _ ->
+                exitGame()
+            }
+            .setNegativeButton(getString(R.string.play_again)){_, _ ->
+                restartGame()
+            }
+            .show()
     }
 
     /*
@@ -75,15 +96,31 @@ class GameFragment : Fragment() {
     * Displays the next scrambled word.
     */
     private fun onSubmitWord() {
+        val playerWord = binding.textInputEditText.text.toString()
 
+        if (viewModel.isUserWordCorrect(playerWord)) {
+            setErrorTextField(false)
+            if (viewModel.nextWord()) {
+                updateNextWordOnScreen()
+            } else {
+                showFinalScoreDialog()
+            }
+        }
     }
+
+
 
     /*
      * Skips the current word without changing the score.
      * Increases the word count.
      */
     private fun onSkipWord() {
-
+        if(viewModel.nextWord()){
+            setErrorTextField(false)
+            updateNextWordOnScreen()
+        }else{
+            showFinalScoreDialog()
+        }
     }
 
     /*

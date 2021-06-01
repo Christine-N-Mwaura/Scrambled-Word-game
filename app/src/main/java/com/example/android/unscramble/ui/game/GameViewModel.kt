@@ -4,7 +4,11 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 
 class GameViewModel : ViewModel() {
-    private var score = 0
+    //add backing property to variable score
+    private var _score = 0
+    val score: Int
+        get() = _score
+
     private var currentWordCount = 0
     //Backing property implementation
     //make currentScramblesWord accessible and editable within GameViewModel class
@@ -42,6 +46,19 @@ class GameViewModel : ViewModel() {
 
     }
 
+    //method to increase score
+    private fun increaseScore(){
+        _score += SCORE_INCREASE
+    }
+
+    //check if the word entered is correct
+    fun isUserWordCorrect(playerWord: String): Boolean{
+        if (playerWord.equals(currentWord,true)){
+            increaseScore()
+            return true
+        }
+        return false
+    }
     /*
     * Returns true if the current word count is less than MAX_NO_OF_WORDS.
     * Updates the next word.
