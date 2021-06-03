@@ -21,6 +21,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import com.example.android.unscramble.R
@@ -48,7 +49,7 @@ class GameFragment : Fragment() {
             savedInstanceState: Bundle?
     ): View {
         // Inflate the layout XML file and return a binding object instance
-        binding = GameFragmentBinding.inflate(inflater, container, false)
+        binding = DataBindingUtil.inflate(inflater, R.layout.game_fragment,container, false)
         Log.d("GameFragment","GameFragment Created/re-created!")
         Log.d("GameFragment","Word: ${viewModel.currentScrambledWord} " +
             "Score: ${viewModel.score} WordCount: ${viewModel.currentWordCount}")
@@ -59,6 +60,15 @@ class GameFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        //initialize layout variables
+        binding.gameViewModel = viewModel
+
+        binding.maxNoOfWords = MAX_NO_OF_WORDS
+
+        // Specify the fragment view as the lifecycle owner of the binding.
+        // This is used so that the binding can observe LiveData updates
+        binding.lifecycleOwner = viewLifecycleOwner
+
         // Setup a click listener for the Submit and Skip buttons.
         binding.submit.setOnClickListener { onSubmitWord() }
         binding.skip.setOnClickListener { onSkipWord() }
@@ -66,7 +76,7 @@ class GameFragment : Fragment() {
 
 
         //observe the current word live data
-        viewModel.currentScrambledWord.observe(viewLifecycleOwner,
+       /** viewModel.currentScrambledWord.observe(viewLifecycleOwner,
             { newWord ->
                 //assign newWord to the scrambled word text view
                 binding.textViewUnscrambledWord.text = newWord
@@ -82,14 +92,12 @@ class GameFragment : Fragment() {
         viewModel.currentWordCount.observe(viewLifecycleOwner,
             {newWordCount->
                 binding.wordCount.text = getString(R.string.word_count,newWordCount, MAX_NO_OF_WORDS)
-            })
+            })**/
+        //not needed anymore since layouts are directly updated from livedata
     }
 
 
-    override fun onDetach() {
-        super.onDetach()
-        Log.d("GameFragment","GameFragment Destroyed!")
-    }
+
 
     //Creates and shows an AlertDialog with the final score
     private fun showFinalScoreDialog(){
