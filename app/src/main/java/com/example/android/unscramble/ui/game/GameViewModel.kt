@@ -57,7 +57,7 @@ class GameViewModel : ViewModel() {
         tempWord.shuffle()
 
         //Use while loop to make sure the current word is not the same as the shuffled word
-        while (tempWord.toString().equals(currentWord,false)){
+        while (String(tempWord).equals(currentWord,false)){
             tempWord.shuffle()
         }
 
@@ -70,6 +70,7 @@ class GameViewModel : ViewModel() {
         }
 
     }
+
 
     //method to increase score
     private fun increaseScore(){
